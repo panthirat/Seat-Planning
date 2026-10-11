@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Studio Auditorium Seating Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-title">
+            <div class="logo-badge"></div>
+            <h1>Auditorium Seating Planner (A - P)</h1>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-outline" id="toggle-label-btn" onclick="toggleClassLabelsOverview()">👁️ แสดงชื่อห้องบนผังภาพรวม</button>
+            <button class="btn-outline" onclick="window.print()">🖨️ พิมพ์ผังติดหน้าห้อง (Print/PDF)</button>
+            <button class="btn-outline" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" onclick="resetAllSeats()">🔄 ล้างที่นั่งทั้งหมด</button>
+        </div>
+    </header>
+
+    <!-- Dashboard Gauges -->
+    <div class="dashboard">
+        <div class="stat-card">
+            <div class="stat-label">ความจุที่นั่งทั้งหมด</div>
+            <div class="stat-value" id="total-seats">0</div>
+            <span style="font-size: 0.75rem; color: var(--text-secondary);">(หักพื้นที่ Control Booth แล้ว)</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">จัดสรรที่นั่งแล้ว</div>
+            <div class="stat-value" id="allocated-seats" style="color: #10b981;">0</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">ที่นั่งคงเหลือ</div>
+            <div class="stat-value" id="remaining-seats" style="color: var(--text-secondary);">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">อัตราการครองที่นั่ง</div>
+            <div class="stat-value" id="occupancy-rate">0%</div>
+        </div>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-grid">
+        <div class="panel">
+            <div class="panel-title">⚡ จัดที่นั่งตามห้องเรียนและเลือกทิศทาง</div>
+            <div class="form-row">
+                <select id="class-select" style="min-width: 230px;"></select>
+                
+                <input type="number" id="group-count" placeholder="จำนวนคน" style="width: 100px;" min="1">
+                
+                <select id="allocation-mode" style="min-width: 240px;">
+                    <optgroup label="↔️ จัดแนวนอนทีละแถว">
+                        <option value="HORIZ_1_TO_29">แนวนอนเริ่มจากขวาไปซ้าย (เลข 1 → 29)</option>
+                        <option value="HORIZ_29_TO_1">แนวนอนเริ่มจากซ้ายไปขวา (เลข 29 → 1)</option>
+                    </optgroup>
+                    <optgroup label="↕️ จัดแนวตั้งเกาะกลุ่มโซน">
+                        <option value="ZONE_RIGHT_VER">แนวตั้งโซนขวาก่อน (เลข 1-7)</option>
+                        <option value="ZONE_CENTER_VER">แนวตั้งโซนกลางก่อน (เลข 8-22)</option>
+                        <option value="ZONE_LEFT_VER">แนวตั้งโซนซ้ายก่อน (เลข 23-29)</option>
+                    </optgroup>
+                </select>
+
+                <!-- Buffer Zone Checkbox -->
+                <label class="checkbox-label" title="เมื่อติ๊กเปิด ระบบจะเว้นเก้าอี้ว่าง 1 ที่นั่งก่อนเริ่มรันกลุ่มใหม่">
+                    <input type="checkbox" id="buffer-zone-check">
+                    🛡️ เว้น 1 ที่ (Buffer Zone)
+                </label>
+
+                <button onclick="allocateGroup()">รันที่นั่งอัตโนมัติ</button>
+            </div>
+
+            <div class="legend-container" id="legend-container"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">🔍 ค้นหาตำแหน่งที่นั่ง (Seat Finder)</div>
+            <div class="form-row" style="flex-direction: column; align-items: stretch;">
+                <input type="text" id="search-input" placeholder="พิมพ์ชื่อห้อง เช่น 7A, 8B, Council, VIP..." oninput="searchSeats()">
+                <button class="btn-outline" style="margin-top: 6px;" onclick="clearSearch()">ล้างการค้นหา</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2D Seating Layout Map -->
+    <div class="seating-wrapper" id="seating-wrapper">
+        <div class="stage">🎭 STAGE / เวทีพิธีการ 🎭</div>
+        <div class="seating-grid" id="seating-grid"></div>
+    </div>
+
+    <!-- Footer Credit -->
+    <footer>
+        Developed by <span class="brand">Quadra Bloom</span>
+    </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
